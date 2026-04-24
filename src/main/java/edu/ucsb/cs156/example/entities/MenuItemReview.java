@@ -11,23 +11,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * This is a JPA entity that represents a UCSBDate, i.e. an entry that comes from the UCSB API for
- * academic calendar dates.
+ * This is a JPA entity that represents a MenuItemReview
+ *
+ * <p>A MenuItemReview is a review of a menu item from the UCSB Dining Commons.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "RECOMMENDATIONREQUEST")
-public class RecommendationRequest {
+@Entity(name = "menuitemreviews")
+public class MenuItemReview {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private String requesterEmail;
-  private String professorEmail;
-  private String explanation;
-  private LocalDateTime dateRequested;
-  private LocalDateTime dateNeeded;
-  private boolean done;
+  private long itemId;
+  private String reviewerEmail;
+  private int stars;
+  private LocalDateTime dateReviewed;
+  private String comments;
 }
