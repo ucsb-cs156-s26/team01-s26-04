@@ -44,7 +44,7 @@ public class UCSBDiningCommonsMenuItemController {
   }
 
   @Operation(summary = "Create a new dining hall menu item")
-  @PreAuthorize("hasRole('ROLE_USER')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
   public UCSBDiningCommonsMenuItem postUCSBDiningHallMenuItems(
       @Parameter(name = "diningCommonsCode") @RequestParam String diningCommonsCode,
