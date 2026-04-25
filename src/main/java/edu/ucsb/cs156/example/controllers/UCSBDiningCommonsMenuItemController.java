@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/ucsbdiningcommonsmenuitem")
 @RestController
 @Slf4j
-public class UCSBDiningCommonsMenuItemController {
+public class UCSBDiningCommonsMenuItemController extends ApiController {
   @Autowired UCSBDiningCommonsMenuItemRepository ucsbDiningMenuItems;
 
   @Operation(summary = "List all ucsb dining hall menu items")
