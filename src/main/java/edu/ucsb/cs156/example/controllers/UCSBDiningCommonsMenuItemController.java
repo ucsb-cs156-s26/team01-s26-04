@@ -90,7 +90,7 @@ public class UCSBDiningCommonsMenuItemController extends ApiController {
   @Operation(summary = "Delete a UCSBDiningCommonsMenuItem")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @DeleteMapping("")
-  public Object deleteUCSBDate(@Parameter(name = "id") @RequestParam Long id) {
+  public Object deleteUCSBMenuItem(@Parameter(name = "id") @RequestParam Long id) {
     UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem =
         ucsbDiningMenuItems
             .findById(id)

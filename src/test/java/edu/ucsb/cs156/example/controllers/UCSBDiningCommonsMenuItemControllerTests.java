@@ -206,7 +206,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+  public void admin_can_edit_an_existing_ucsbmenuitem() throws Exception {
     // arrange
 
     UCSBDiningCommonsMenuItem ucsbDiningHallMenuItemOrig =
@@ -251,7 +251,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+  public void admin_cannot_edit_ucsbmenuitem_that_does_not_exist() throws Exception {
     // arrange
 
     UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItemEdited =
@@ -286,7 +286,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_can_delete_a_date() throws Exception {
+  public void admin_can_delete_a_menu_item() throws Exception {
     // arrange
 
     UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem1 =
@@ -316,7 +316,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+  public void admin_tries_to_delete_non_existant_ucsbmenuitem_and_gets_right_error_message()
       throws Exception {
     // arrange
 
