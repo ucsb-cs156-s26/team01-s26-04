@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.example.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.RecommendationRequest;
 import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,37 +50,31 @@ public class RecommendationRequestController extends ApiController {
    * @param done
    * @return the saved recommendationrequest
    */
-  @Operation(summary = "Create a new date")
+  @Operation(summary = "Create a new recommendation request")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
   public RecommendationRequest postRecommendationRequest(
       @Parameter(name = "requesterEmail") @RequestParam String requesterEmail,
       @Parameter(name = "professorEmail") @RequestParam String professorEmail,
       @Parameter(name = "explanation") @RequestParam String explanation,
-      @Parameter(name = "dateRequested") @RequestParam String dateRequested,
-      @Parameter(
-              name = "dateRequested",
-              description =
-                  "date (in iso format, e.g. YYYY-mm-ddTHH:MM:SS; see https://en.wikipedia.org/wiki/ISO_8601)")
-          @RequestParam("dateRequested")
+      @Parameter(name = "dateRequested", description = "ISO format e.g. YYYY-MM-DDTHH:MM:SS")
+          @RequestParam
           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-          LocalDateTime localDateTime)
-      throws JsonProcessingException {
-
-    // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    // See: https://www.baeldung.com/spring-date-parameters
-
-    log.info("dateRequested={}", dateRequested);
+          LocalDateTime dateRequested,
+      @Parameter(name = "dateNeeded", description = "ISO format e.g. YYYY-MM-DDTHH:MM:SS")
+          @RequestParam
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime dateNeeded,
+      @Parameter(name = "done") @RequestParam boolean done) {
 
     RecommendationRequest recommendationRequest = new RecommendationRequest();
     recommendationRequest.setRequesterEmail(requesterEmail);
     recommendationRequest.setProfessorEmail(professorEmail);
     recommendationRequest.setExplanation(explanation);
-    recommendationRequest.setDateRequested(localDateTime);
+    recommendationRequest.setDateRequested(dateRequested);
+    recommendationRequest.setDateNeeded(dateNeeded);
+    recommendationRequest.setDone(done);
 
-    RecommendationRequest savedRecommendationRequest =
-        recommendationRequestRepository.save(recommendationRequest);
-
-    return savedRecommendationRequest;
+    return recommendationRequestRepository.save(recommendationRequest);
   }
 }
