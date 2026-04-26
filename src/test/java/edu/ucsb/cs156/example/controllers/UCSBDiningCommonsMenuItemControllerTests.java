@@ -221,7 +221,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_can_delete_a_menu_item() throws Exception {
+  public void admin_can_delete_a_menuitem() throws Exception {
     // arrange
 
     UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem1 =
