@@ -63,7 +63,7 @@ public class HelpRequestController extends ApiController {
    *
    * @param requesterEmail the requester email
    * @param teamId the id of the team
-   * @param tableOrBreakOutRoom represents whether a team is in a table or breakout room
+   * @param tableOrBreakoutRoom represents whether a team is in a table or breakout room
    * @param requestTime the timestamp of the request
    * @param explanation an explanation of the issue
    * @param solved represents whether the issue has been solved
