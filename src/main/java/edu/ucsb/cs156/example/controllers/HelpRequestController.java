@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.HelpRequest;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.HelpRequestRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,6 +41,24 @@ public class HelpRequestController extends ApiController {
   }
 
   /**
+   * Get a single help request by id
+   *
+   * @param id the id of the help request
+   * @return a HelpRequest
+   */
+  @Operation(summary = "Get a single help request")
+  @PreAuthorize("hasRole('ROLE_USER')")
+  @GetMapping("")
+  public HelpRequest getById(@Parameter(name = "id") @RequestParam Long id) {
+    HelpRequest helpRequest =
+        helpRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(HelpRequest.class, id));
+
+    return helpRequest;
+  }
+
+  /**
    * Create a new help request
    *
    * @param requesterEmail the requester email
@@ -51,7 +70,7 @@ public class HelpRequestController extends ApiController {
    * @return the saved helprequest
    */
   @Operation(summary = "Create a new help request")
-  @PreAuthorize("hasRole('ROLE_USER')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   @PostMapping("/post")
   public HelpRequest postHelpRequest(
       @Parameter(name = "requesterEmail") @RequestParam String requesterEmail,
