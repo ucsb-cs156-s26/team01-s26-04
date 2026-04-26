@@ -2,7 +2,6 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.UCSBDiningCommonsMenuItem;
-import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.UCSBDiningCommonsMenuItemRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,28 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = &quot;UCSBDiningCommonsMenuItem&quot;)
 @RequestMapping(&quot;/api/ucsbdiningcommonsmenuitem&quot;)
 @RestController
-<span class="fc" id="L22">@Slf4j</span>
-<span class="fc" id="L23">public class UCSBDiningCommonsMenuItemController extends ApiController {</span>
+<span class="fc" id="L21">@Slf4j</span>
+<span class="fc" id="L22">public class UCSBDiningCommonsMenuItemController extends ApiController {</span>
   @Autowired UCSBDiningCommonsMenuItemRepository ucsbDiningMenuItems;
 
   @Operation(summary = &quot;List all ucsb dining hall menu items&quot;)
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;/all&quot;)
   public Iterable&lt;UCSBDiningCommonsMenuItem&gt; allUCSBDiningHallMenuItems() {
-<span class="fc" id="L30">    Iterable&lt;UCSBDiningCommonsMenuItem&gt; menuItem = ucsbDiningMenuItems.findAll();</span>
-<span class="fc" id="L31">    return menuItem;</span>
-  }
-
-  @Operation(summary = &quot;Get a single dining hall menu item&quot;)
-  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
-  @GetMapping(&quot;&quot;)
-  public UCSBDiningCommonsMenuItem getById(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L38">    UCSBDiningCommonsMenuItem ucsbMenuItem =</span>
-        ucsbDiningMenuItems
-<span class="fc" id="L40">            .findById(id)</span>
-<span class="fc" id="L41">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));</span>
-
-<span class="fc" id="L43">    return ucsbMenuItem;</span>
+<span class="fc" id="L29">    Iterable&lt;UCSBDiningCommonsMenuItem&gt; menuItem = ucsbDiningMenuItems.findAll();</span>
+<span class="fc" id="L30">    return menuItem;</span>
   }
 
   @Operation(summary = &quot;Create a new dining hall menu item&quot;)
@@ -52,14 +39,14 @@ import org.springframework.web.bind.annotation.RestController;
       @Parameter(name = &quot;station&quot;) @RequestParam String station)
       throws JsonProcessingException {
 
-<span class="fc" id="L55">    UCSBDiningCommonsMenuItem item = new UCSBDiningCommonsMenuItem();</span>
-<span class="fc" id="L56">    item.setDiningCommonsCode(diningCommonsCode);</span>
-<span class="fc" id="L57">    item.setName(name);</span>
-<span class="fc" id="L58">    item.setStation(station);</span>
+<span class="fc" id="L42">    UCSBDiningCommonsMenuItem item = new UCSBDiningCommonsMenuItem();</span>
+<span class="fc" id="L43">    item.setDiningCommonsCode(diningCommonsCode);</span>
+<span class="fc" id="L44">    item.setName(name);</span>
+<span class="fc" id="L45">    item.setStation(station);</span>
 
-<span class="fc" id="L60">    UCSBDiningCommonsMenuItem savedMenuItem = ucsbDiningMenuItems.save(item);</span>
+<span class="fc" id="L47">    UCSBDiningCommonsMenuItem savedMenuItem = ucsbDiningMenuItems.save(item);</span>
 
-<span class="fc" id="L62">    return savedMenuItem;</span>
+<span class="fc" id="L49">    return savedMenuItem;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
