@@ -2,8 +2,8 @@
     "databaseChangeLog": [
       {
         "changeSet": {
-          "id": "RecommendationRequest-1",
-          "author": "Ertan10",
+          "id": "HelpRequests-1",
+          "author": "ErikRodriguez29",
           "preConditions": [
             {
               "onFail": "MARK_RAN"
@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "RECOMMENDATIONREQUEST"
+                    "tableName": "HELPREQUESTS"
                   }
                 }
               ]
@@ -27,7 +27,7 @@
                       "autoIncrement": true,
                       "constraints": {
                         "primaryKey": true,
-                        "primaryKeyName": "RECOMMENDATIONREQUEST_PK"
+                        "primaryKeyName": "HELPREQUESTS_PK"
                       },
                       "name": "ID",
                       "type": "BIGINT"
@@ -41,8 +41,20 @@
                   },
                   {
                     "column": {
-                      "name": "PROFESSOR_EMAIL",
+                      "name": "TEAM_ID",
                       "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "TABLE_OR_BREAKOUT_ROOM",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "name": "REQUEST_TIME",
+                      "type": "TIMESTAMP"
                     }
                   },
                   {
@@ -53,24 +65,12 @@
                   },
                   {
                     "column": {
-                      "name": "DATE_REQUESTED",
-                      "type": "TIMESTAMP"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "DATE_NEEDED",
-                      "type": "TIMESTAMP"
-                    }
-                  },
-                  {
-                    "column": {
-                      "name": "DONE",
+                      "name": "SOLVED",
                       "type": "BOOLEAN"
                     }
                   }
                 ],
-                "tableName": "RECOMMENDATIONREQUEST"
+                "tableName": "HELPREQUESTS"
               }
             }
           ]
