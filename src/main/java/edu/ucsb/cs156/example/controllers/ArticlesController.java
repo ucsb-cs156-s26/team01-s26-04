@@ -50,11 +50,11 @@ public class ArticlesController extends ApiController {
   @PreAuthorize("hasRole('ROLE_USER')")
   @GetMapping("")
   public Articles getById(@Parameter(name = "id") @RequestParam Long id) {
-    Articles articles =
+    Articles article =
         articlesRepository
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
-    return articles;
+    return article;
   }
 
   /**
@@ -86,15 +86,44 @@ public class ArticlesController extends ApiController {
 
     log.info("dateAdded={}", dateAdded);
 
-    Articles articles = new Articles();
-    articles.setTitle(title);
-    articles.setUrl(url);
-    articles.setExplanation(explanation);
-    articles.setEmail(email);
-    articles.setDateAdded(dateAdded);
+    Articles article = new Articles();
+    article.setTitle(title);
+    article.setUrl(url);
+    article.setExplanation(explanation);
+    article.setEmail(email);
+    article.setDateAdded(dateAdded);
 
-    Articles savedArticles = articlesRepository.save(articles);
+    Articles savedArticle = articlesRepository.save(article);
 
-    return savedArticles;
+    return savedArticle;
+  }
+
+  /**
+   * Update a single article
+   *
+   * @param id id of the article to update
+   * @param incoming the new article
+   * @return the updated article object
+   */
+  @Operation(summary = "Update a single article")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PutMapping("")
+  public Articles updateArticle(
+      @Parameter(name = "id") @RequestParam Long id, @RequestBody @Valid Articles incoming) {
+
+    Articles articles =
+        articlesRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Articles.class, id));
+
+    articles.setTitle(incoming.getTitle());
+    articles.setUrl(incoming.getUrl());
+    articles.setExplanation(incoming.getExplanation());
+    articles.setEmail(incoming.getEmail());
+    articles.setDateAdded(incoming.getDateAdded());
+
+    articlesRepository.save(articles);
+
+    return articles;
   }
 }
