@@ -51,7 +51,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                 .param("explanation", "universityofcalifornia")
                 .param("dateRequested", "2022-01-03T00:00:00")
                 .param("dateNeeded", "2022-05-01T00:00:00")
-                .param("done", "false")
+                .param("done", "true")
                 .with(csrf()))
         .andExpect(status().is(403));
   }
@@ -67,7 +67,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                 .param("explanation", "universityofcalifornia")
                 .param("dateRequested", "2022-01-03T00:00:00")
                 .param("dateNeeded", "2022-05-01T00:00:00")
-                .param("done", "false")
+                .param("done", "true")
                 .with(csrf()))
         .andExpect(status().is(403));
   }
@@ -85,7 +85,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     rr1.setExplanation("universityofcalifornia");
     rr1.setDateRequested(ldt1);
     rr1.setDateNeeded(ldt2);
-    rr1.setDone(false);
+    rr1.setDone(true);
 
     ArrayList<RecommendationRequest> expectedRecommendationRequest = new ArrayList<>();
     expectedRecommendationRequest.add(rr1);
@@ -117,7 +117,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     rr1.setExplanation("universityofcalifornia");
     rr1.setDateRequested(ldt1);
     rr1.setDateNeeded(ldt2);
-    rr1.setDone(false);
+    rr1.setDone(true);
 
     when(recommendationRequestRepository.save(eq(rr1))).thenReturn(rr1);
 
@@ -130,7 +130,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
                     .param("explanation", "universityofcalifornia")
                     .param("dateRequested", "2022-01-03T00:00:00")
                     .param("dateNeeded", "2022-05-01T00:00:00")
-                    .param("done", "false")
+                    .param("done", "true")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
