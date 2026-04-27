@@ -30,13 +30,13 @@
                         "primaryKeyName": "MENUITEMREVIEWS_PK"
                       },
                       "name": "ID",
-                      "type": "LONG"
+                      "type": "BIGINT"
                     }
                   },
                   {
                     "column": {
                       "name": "ITEM_ID",
-                      "type": "LONG"
+                      "type": "BIGINT"
                     }
                   },
                   {
