@@ -16,7 +16,6 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -29,10 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 public class RecommendationRequestControllerTests extends ControllerTestCase {
 
   @MockitoBean RecommendationRequestRepository recommendationRequestRepository;
-
   @MockitoBean UserRepository userRepository;
-
-  // Authorization tests for /api/recommendationrequest/all
 
   @Test
   public void logged_out_users_cannot_get_all() throws Exception {
@@ -45,16 +41,14 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     mockMvc.perform(get("/api/recommendationrequest/all")).andExpect(status().is(200));
   }
 
-  // Authorization tests for /api/recommendationrequest/post
-
   @Test
   public void logged_out_users_cannot_post() throws Exception {
     mockMvc
         .perform(
             post("/api/recommendationrequest/post")
-                .param("requesterEmail", "test@ucsb.edu")
-                .param("professorEmail", "prof@ucsb.edu")
-                .param("explanation", "grad school")
+                .param("requesterEmail", "meb@ucsb.edu")
+                .param("professorEmail", "pconrad@ucsb.edu")
+                .param("explanation", "universityofcalifornia")
                 .param("dateRequested", "2022-01-03T00:00:00")
                 .param("dateNeeded", "2022-05-01T00:00:00")
                 .param("done", "false")
@@ -68,9 +62,9 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     mockMvc
         .perform(
             post("/api/recommendationrequest/post")
-                .param("requesterEmail", "test@ucsb.edu")
-                .param("professorEmail", "prof@ucsb.edu")
-                .param("explanation", "grad school")
+                .param("requesterEmail", "meb@ucsb.edu")
+                .param("professorEmail", "pconrad@ucsb.edu")
+                .param("explanation", "universityofcalifornia")
                 .param("dateRequested", "2022-01-03T00:00:00")
                 .param("dateNeeded", "2022-05-01T00:00:00")
                 .param("done", "false")
@@ -78,51 +72,34 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
         .andExpect(status().is(403));
   }
 
-  // Tests with mocks for database actions
-
   @WithMockUser(roles = {"USER"})
   @Test
-  public void logged_in_user_can_get_all_recommendationrequests() throws Exception {
+  public void logged_in_user_can_get_all_recommendationrequest() throws Exception {
 
-    // arrange
     LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
     LocalDateTime ldt2 = LocalDateTime.parse("2022-05-01T00:00:00");
 
-    RecommendationRequest rr1 =
-        RecommendationRequest.builder()
-            .requesterEmail("test1@ucsb.edu")
-            .professorEmail("prof1@ucsb.edu")
-            .explanation("grad school")
-            .dateRequested(ldt1)
-            .dateNeeded(ldt2)
-            .done(false)
-            .build();
+    RecommendationRequest rr1 = new RecommendationRequest();
+    rr1.setRequesterEmail("meb@ucsb.edu");
+    rr1.setProfessorEmail("pconrad@ucsb.edu");
+    rr1.setExplanation("universityofcalifornia");
+    rr1.setDateRequested(ldt1);
+    rr1.setDateNeeded(ldt2);
+    rr1.setDone(false);
 
-    RecommendationRequest rr2 =
-        RecommendationRequest.builder()
-            .requesterEmail("test2@ucsb.edu")
-            .professorEmail("prof2@ucsb.edu")
-            .explanation("internship")
-            .dateRequested(ldt1)
-            .dateNeeded(ldt2)
-            .done(true)
-            .build();
+    ArrayList<RecommendationRequest> expectedRecommendationRequest = new ArrayList<>();
+    expectedRecommendationRequest.add(rr1);
 
-    ArrayList<RecommendationRequest> expectedList = new ArrayList<>();
-    expectedList.addAll(Arrays.asList(rr1, rr2));
+    when(recommendationRequestRepository.findAll()).thenReturn(expectedRecommendationRequest);
 
-    when(recommendationRequestRepository.findAll()).thenReturn(expectedList);
-
-    // act
     MvcResult response =
         mockMvc
             .perform(get("/api/recommendationrequest/all"))
             .andExpect(status().isOk())
             .andReturn();
 
-    // assert
     verify(recommendationRequestRepository, times(1)).findAll();
-    String expectedJson = mapper.writeValueAsString(expectedList);
+    String expectedJson = mapper.writeValueAsString(expectedRecommendationRequest);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
@@ -131,30 +108,26 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
   @Test
   public void an_admin_user_can_post_a_new_recommendationrequest() throws Exception {
 
-    // arrange
     LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
     LocalDateTime ldt2 = LocalDateTime.parse("2022-05-01T00:00:00");
 
-    RecommendationRequest rr1 =
-        RecommendationRequest.builder()
-            .requesterEmail("test@ucsb.edu")
-            .professorEmail("prof@ucsb.edu")
-            .explanation("grad school")
-            .dateRequested(ldt1)
-            .dateNeeded(ldt2)
-            .done(false)
-            .build();
+    RecommendationRequest rr1 = new RecommendationRequest();
+    rr1.setRequesterEmail("meb@ucsb.edu");
+    rr1.setProfessorEmail("pconrad@ucsb.edu");
+    rr1.setExplanation("universityofcalifornia");
+    rr1.setDateRequested(ldt1);
+    rr1.setDateNeeded(ldt2);
+    rr1.setDone(false);
 
     when(recommendationRequestRepository.save(eq(rr1))).thenReturn(rr1);
 
-    // act
     MvcResult response =
         mockMvc
             .perform(
                 post("/api/recommendationrequest/post")
-                    .param("requesterEmail", "test@ucsb.edu")
-                    .param("professorEmail", "prof@ucsb.edu")
-                    .param("explanation", "grad school")
+                    .param("requesterEmail", "meb@ucsb.edu")
+                    .param("professorEmail", "pconrad@ucsb.edu")
+                    .param("explanation", "universityofcalifornia")
                     .param("dateRequested", "2022-01-03T00:00:00")
                     .param("dateNeeded", "2022-05-01T00:00:00")
                     .param("done", "false")
@@ -162,8 +135,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
             .andExpect(status().isOk())
             .andReturn();
 
-    // assert
-    verify(recommendationRequestRepository, times(1)).save(rr1);
+    verify(recommendationRequestRepository, times(1)).save(eq(rr1));
     String expectedJson = mapper.writeValueAsString(rr1);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
