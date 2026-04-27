@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.example.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -311,6 +312,61 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
                     .characterEncoding("utf-8")
                     .content(requestBody)
                     .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(menuItemReviewRepository, times(1)).findById(1L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("MenuItemReview with id 1 not found", json.get("message"));
+  }
+
+  // Tests for DELETE
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_review() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2026-04-03T00:00:00");
+
+    MenuItemReview menuItemReview1 =
+        MenuItemReview.builder()
+            .itemId(1)
+            .reviewerEmail("tladha@ucsb.edu")
+            .stars(5)
+            .dateReviewed(ldt1)
+            .comments("yum!")
+            .build();
+
+    when(menuItemReviewRepository.findById(eq(1L))).thenReturn(Optional.of(menuItemReview1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/menuitemreview").param("id", "1").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(menuItemReviewRepository, times(1)).findById(1L);
+    verify(menuItemReviewRepository, times(1)).delete(any());
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("MenuItemReview with id 1 deleted", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_tries_to_delete_non_existant_review_and_gets_right_error_message()
+      throws Exception {
+    // arrange
+
+    when(menuItemReviewRepository.findById(eq(1L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/menuitemreview").param("id", "1").with(csrf()))
             .andExpect(status().isNotFound())
             .andReturn();
 
