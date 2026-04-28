@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
@@ -199,11 +200,11 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+  public void admin_can_edit_an_existing_recommendationrequest() throws Exception {
     // arrange
 
     LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-    LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2023-01-04T00:00:00");
 
     RecommendationRequest rr1 = new RecommendationRequest();
     rr1.setRequesterEmail("meb@ucsb.edu");
@@ -214,16 +215,17 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     rr1.setDone(true);
 
     RecommendationRequest editedrequest = new RecommendationRequest();
-    rr1.setRequesterEmail("pconrad@ucsb.edu");
-    rr1.setProfessorEmail("meb@ucsb.edu");
-    rr1.setExplanation("arizona");
-    rr1.setDateRequested(ldt2);
-    rr1.setDateNeeded(ldt1);
-    rr1.setDone(true);
+    editedrequest.setRequesterEmail("pconrad@ucsb.edu");
+    editedrequest.setProfessorEmail("meb@ucsb.edu");
+    editedrequest.setExplanation("arizona");
+    editedrequest.setDateRequested(ldt2);
+    editedrequest.setDateNeeded(ldt1);
+    editedrequest.setDone(false);
 
     String requestBody = mapper.writeValueAsString(editedrequest);
 
     when(recommendationRequestRepository.findById(eq(67L))).thenReturn(Optional.of(rr1));
+    when(recommendationRequestRepository.save(eq(editedrequest))).thenReturn(editedrequest);
 
     // act
     MvcResult response =
@@ -252,6 +254,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     // arrange
 
     LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2023-01-04T00:00:00");
 
     RecommendationRequest rr1 = new RecommendationRequest();
     rr1.setRequesterEmail("meb@ucsb.edu");
@@ -263,7 +266,7 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
 
     String requestBody = mapper.writeValueAsString(rr1);
 
-    when(ucsbDateRepository.findById(eq(67L))).thenReturn(Optional.empty());
+    when(recommendationRequestRepository.findById(eq(67L))).thenReturn(Optional.empty());
 
     // act
     MvcResult response =
