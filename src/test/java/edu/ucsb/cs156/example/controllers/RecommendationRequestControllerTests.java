@@ -196,4 +196,91 @@ public class RecommendationRequestControllerTests extends ControllerTestCase {
     assertEquals("EntityNotFoundException", json.get("type"));
     assertEquals("RecommendationRequest with id 7 not found", json.get("message"));
   }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+    RecommendationRequest rr1 = new RecommendationRequest();
+    rr1.setRequesterEmail("meb@ucsb.edu");
+    rr1.setProfessorEmail("pconrad@ucsb.edu");
+    rr1.setExplanation("universityofcalifornia");
+    rr1.setDateRequested(ldt1);
+    rr1.setDateNeeded(ldt2);
+    rr1.setDone(true);
+
+    RecommendationRequest editedrequest = new RecommendationRequest();
+    rr1.setRequesterEmail("pconrad@ucsb.edu");
+    rr1.setProfessorEmail("meb@ucsb.edu");
+    rr1.setExplanation("arizona");
+    rr1.setDateRequested(ldt2);
+    rr1.setDateNeeded(ldt1);
+    rr1.setDone(true);
+
+    String requestBody = mapper.writeValueAsString(editedrequest);
+
+    when(recommendationRequestRepository.findById(eq(67L))).thenReturn(Optional.of(rr1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/recommendationrequest")
+                    .param("id", "67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(67L);
+    verify(recommendationRequestRepository, times(1))
+        .save(editedrequest); // should be saved with correct user
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_recommendationrequest_that_does_not_exist() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+    RecommendationRequest rr1 = new RecommendationRequest();
+    rr1.setRequesterEmail("meb@ucsb.edu");
+    rr1.setProfessorEmail("pconrad@ucsb.edu");
+    rr1.setExplanation("universityofcalifornia");
+    rr1.setDateRequested(ldt1);
+    rr1.setDateNeeded(ldt2);
+    rr1.setDone(true);
+
+    String requestBody = mapper.writeValueAsString(rr1);
+
+    when(ucsbDateRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/recommendationrequest")
+                    .param("id", "67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("RecommendationRequest with id 67 not found", json.get("message"));
+  }
 }
