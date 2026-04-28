@@ -17,6 +17,8 @@ import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -47,13 +49,13 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
     mockMvc.perform(get("/api/menuitemreview/all")).andExpect(status().is(200)); // logged
   }
 
-  /*@Test
+  @Test
   public void logged_out_users_cannot_get_by_id() throws Exception {
     mockMvc
-        .perform(get("/api/menuitemreview").param("id", "7"))
+        .perform(get("/api/menuitemreview").param("id", "123"))
         .andExpect(status().is(403)); // logged out users can't get by id
   }
-    */
+
   // Authorization tests for /api/menuitemreview/post
   // (Perhaps should also have these for put and delete)
 
@@ -87,7 +89,7 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
   }
 
   // // Tests with mocks for database actions
-  /*
+
   @WithMockUser(roles = {"USER"})
   @Test
   public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
@@ -95,9 +97,9 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
     // arrange
     LocalDateTime ldt = LocalDateTime.parse("2026-04-26T01:30:00");
 
-
     MenuItemReview menuItemReview =
         MenuItemReview.builder()
+            .id(123)
             .itemId(1)
             .reviewerEmail("tladha@ucsb.edu")
             .stars(5)
@@ -105,48 +107,46 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
             .comments("yum!")
             .build();
 
-    when(menuItemReviewRepository.findById(eq(7L))).thenReturn(Optional.of(menuItemReview));
+    when(menuItemReviewRepository.findById(eq(123L))).thenReturn(Optional.of(menuItemReview));
 
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/menuitemreview").param("id", "7"))
+            .perform(get("/api/menuitemreview").param("id", "123"))
             .andExpect(status().isOk())
             .andReturn();
 
     // assert
 
-    verify(menuItemReviewRepository, times(1)).findById(eq(7L));
+    verify(menuItemReviewRepository, times(1)).findById(eq(123L));
     String expectedJson = mapper.writeValueAsString(menuItemReview);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
-  */
 
-  /*
-    @WithMockUser(roles = {"USER"})
-    @Test
-    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
 
-      // arrange
+    // arrange
 
-      when(menuItemReviewRepository.findById(eq(7L))).thenReturn(Optional.empty());
+    when(menuItemReviewRepository.findById(eq(123L))).thenReturn(Optional.empty());
 
-      // act
-      MvcResult response =
-          mockMvc
-              .perform(get("/api/menuitemreview").param("id", "7"))
-              .andExpect(status().isNotFound())
-              .andReturn();
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/menuitemreview").param("id", "123"))
+            .andExpect(status().isNotFound())
+            .andReturn();
 
-      // assert
+    // assert
 
-      verify(menuItemReviewRepository, times(1)).findById(eq(7L));
-      Map<String, Object> json = responseToJson(response);
-      assertEquals("EntityNotFoundException", json.get("type"));
-      assertEquals("MenuItemReview with id 7 not found", json.get("message"));
-    }
-  */
+    verify(menuItemReviewRepository, times(1)).findById(eq(123L));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("MenuItemReview with id 123 not found", json.get("message"));
+  }
+
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_user_can_get_all_menuitemreviews() throws Exception {
