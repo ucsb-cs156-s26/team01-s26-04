@@ -1,0 +1,70 @@
+{ "databaseChangeLog": [
+    {
+        "changeSet": {
+          "id": "UCSBDiningCommonsMenuItem-1",
+          "author": "vanessaxu07",
+          "preConditions": [
+            {
+              "onFail": "MARK_RAN"
+            },
+            {
+              "not": [
+                {
+                  "tableExists": {
+                    "tableName": "UCSBDININGCOMMONSMENUITEM"
+                  }
+                }
+              ]
+            }
+          ],
+          "changes": [
+            {
+              "createTable": {
+                "columns": [
+                  {
+                      "column": {
+                      "autoIncrement": true,
+                      "constraints": {
+                        "primaryKey": true,
+                        "primaryKeyName": "UCSBDININGCOMMONSMENUITEM_PK"
+                      },
+                      "name": "ID",
+                      "type": "BIGINT"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "DINING_COMMONS_CODE",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "NAME",
+                      "type": "VARCHAR(255)"
+                    }
+                  },
+                  {
+                    "column": {
+                      "constraints": {
+                        "nullable": false
+                      },
+                      "name": "STATION",
+                      "type": "VARCHAR(255)"
+                    }
+                  }
+                  ]
+                ,
+                "tableName": "UCSBDININGCOMMONSMENUITEM"
+              }
+            }]
+
+        }
+    }
+]}
