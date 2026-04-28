@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = &quot;Articles&quot;)
 @RequestMapping(&quot;/api/articles&quot;)
 @RestController
-<span class="fc" id="L25">@Slf4j</span>
-<span class="fc" id="L26">public class ArticlesController extends ApiController {</span>
+<span class="fc" id="L26">@Slf4j</span>
+<span class="fc" id="L27">public class ArticlesController extends ApiController {</span>
 
   @Autowired ArticlesRepository articlesRepository;
 
@@ -36,8 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;/all&quot;)
   public Iterable&lt;Articles&gt; allArticles() {
-<span class="fc" id="L39">    Iterable&lt;Articles&gt; articles = articlesRepository.findAll();</span>
-<span class="fc" id="L40">    return articles;</span>
+<span class="fc" id="L40">    Iterable&lt;Articles&gt; articles = articlesRepository.findAll();</span>
+<span class="fc" id="L41">    return articles;</span>
   }
 
   /**
@@ -50,11 +51,11 @@ import org.springframework.web.bind.annotation.RestController;
   @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
   @GetMapping(&quot;&quot;)
   public Articles getById(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
-<span class="fc" id="L53">    Articles articles =</span>
+<span class="fc" id="L54">    Articles articles =</span>
         articlesRepository
-<span class="fc" id="L55">            .findById(id)</span>
-<span class="fc" id="L56">            .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
-<span class="fc" id="L57">    return articles;</span>
+<span class="fc" id="L56">            .findById(id)</span>
+<span class="fc" id="L57">            .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
+<span class="fc" id="L58">    return articles;</span>
   }
 
   /**
@@ -84,18 +85,37 @@ import org.springframework.web.bind.annotation.RestController;
     // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     // See: https://www.baeldung.com/spring-date-parameters
 
-<span class="fc" id="L87">    log.info(&quot;dateAdded={}&quot;, dateAdded);</span>
+<span class="fc" id="L88">    log.info(&quot;dateAdded={}&quot;, dateAdded);</span>
 
-<span class="fc" id="L89">    Articles articles = new Articles();</span>
-<span class="fc" id="L90">    articles.setTitle(title);</span>
-<span class="fc" id="L91">    articles.setUrl(url);</span>
-<span class="fc" id="L92">    articles.setExplanation(explanation);</span>
-<span class="fc" id="L93">    articles.setEmail(email);</span>
-<span class="fc" id="L94">    articles.setDateAdded(dateAdded);</span>
+<span class="fc" id="L90">    Articles articles = new Articles();</span>
+<span class="fc" id="L91">    articles.setTitle(title);</span>
+<span class="fc" id="L92">    articles.setUrl(url);</span>
+<span class="fc" id="L93">    articles.setExplanation(explanation);</span>
+<span class="fc" id="L94">    articles.setEmail(email);</span>
+<span class="fc" id="L95">    articles.setDateAdded(dateAdded);</span>
 
-<span class="fc" id="L96">    Articles savedArticles = articlesRepository.save(articles);</span>
+<span class="fc" id="L97">    Articles savedArticles = articlesRepository.save(articles);</span>
 
-<span class="fc" id="L98">    return savedArticles;</span>
+<span class="fc" id="L99">    return savedArticles;</span>
+  }
+
+  /**
+   * Delete an Articles
+   *
+   * @param id the id of the article to delete
+   * @return a message indicating the article was deleted
+   */
+  @Operation(summary = &quot;Delete an Articles&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @DeleteMapping(&quot;&quot;)
+  public Object deleteArticles(@Parameter(name = &quot;id&quot;) @RequestParam Long id) {
+<span class="fc" id="L112">    Articles articles =</span>
+        articlesRepository
+<span class="fc" id="L114">            .findById(id)</span>
+<span class="fc" id="L115">            .orElseThrow(() -&gt; new EntityNotFoundException(Articles.class, id));</span>
+
+<span class="fc" id="L117">    articlesRepository.delete(articles);</span>
+<span class="fc" id="L118">    return genericMessage(&quot;Articles with id %s deleted&quot;.formatted(id));</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
