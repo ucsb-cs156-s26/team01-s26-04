@@ -41,6 +41,24 @@ import org.springframework.web.bind.annotation.RestController;
   }
 
   /**
+   * This method returns a single UCSBOrganization.
+   *
+   * @param orgCode organization code
+   * @return a single UCSBOrganization
+   */
+  @Operation(summary = &quot;Get a single UCSBOrganization&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;&quot;)
+  public UCSBOrganization getById(@Parameter(name = &quot;orgCode&quot;) @RequestParam String orgCode) {
+<span class="fc" id="L53">    UCSBOrganization organization =</span>
+        ucsbOrganizationRepository
+<span class="fc" id="L55">            .findById(orgCode)</span>
+<span class="fc" id="L56">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
+
+<span class="fc" id="L58">    return organization;</span>
+  }
+
+  /**
    * This method creates a new UCSBOrganization. Accessible only to users with the role
    * &quot;ROLE_ADMIN&quot;.
    *
@@ -59,15 +77,15 @@ import org.springframework.web.bind.annotation.RestController;
       @Parameter(name = &quot;orgTranslation&quot;) @RequestParam String orgTranslation,
       @Parameter(name = &quot;inactive&quot;) @RequestParam boolean inactive) {
 
-<span class="fc" id="L62">    UCSBOrganization organization = new UCSBOrganization();</span>
-<span class="fc" id="L63">    organization.setOrgCode(orgCode);</span>
-<span class="fc" id="L64">    organization.setOrgTranslationShort(orgTranslationShort);</span>
-<span class="fc" id="L65">    organization.setOrgTranslation(orgTranslation);</span>
-<span class="fc" id="L66">    organization.setInactive(inactive);</span>
+<span class="fc" id="L80">    UCSBOrganization organization = new UCSBOrganization();</span>
+<span class="fc" id="L81">    organization.setOrgCode(orgCode);</span>
+<span class="fc" id="L82">    organization.setOrgTranslationShort(orgTranslationShort);</span>
+<span class="fc" id="L83">    organization.setOrgTranslation(orgTranslation);</span>
+<span class="fc" id="L84">    organization.setInactive(inactive);</span>
 
-<span class="fc" id="L68">    UCSBOrganization savedOrganization = ucsbOrganizationRepository.save(organization);</span>
+<span class="fc" id="L86">    UCSBOrganization savedOrganization = ucsbOrganizationRepository.save(organization);</span>
 
-<span class="fc" id="L70">    return savedOrganization;</span>
+<span class="fc" id="L88">    return savedOrganization;</span>
   }
 
   /**
@@ -84,18 +102,18 @@ import org.springframework.web.bind.annotation.RestController;
       @Parameter(name = &quot;orgCode&quot;) @RequestParam String orgCode,
       @RequestBody @Valid UCSBOrganization incoming) {
 
-<span class="fc" id="L87">    UCSBOrganization organization =</span>
+<span class="fc" id="L105">    UCSBOrganization organization =</span>
         ucsbOrganizationRepository
-<span class="fc" id="L89">            .findById(orgCode)</span>
-<span class="fc" id="L90">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
+<span class="fc" id="L107">            .findById(orgCode)</span>
+<span class="fc" id="L108">            .orElseThrow(() -&gt; new EntityNotFoundException(UCSBOrganization.class, orgCode));</span>
 
-<span class="fc" id="L92">    organization.setOrgTranslationShort(incoming.getOrgTranslationShort());</span>
-<span class="fc" id="L93">    organization.setOrgTranslation(incoming.getOrgTranslation());</span>
-<span class="fc" id="L94">    organization.setInactive(incoming.getInactive());</span>
+<span class="fc" id="L110">    organization.setOrgTranslationShort(incoming.getOrgTranslationShort());</span>
+<span class="fc" id="L111">    organization.setOrgTranslation(incoming.getOrgTranslation());</span>
+<span class="fc" id="L112">    organization.setInactive(incoming.getInactive());</span>
 
-<span class="fc" id="L96">    ucsbOrganizationRepository.save(organization);</span>
+<span class="fc" id="L114">    ucsbOrganizationRepository.save(organization);</span>
 
-<span class="fc" id="L98">    return organization;</span>
+<span class="fc" id="L116">    return organization;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
