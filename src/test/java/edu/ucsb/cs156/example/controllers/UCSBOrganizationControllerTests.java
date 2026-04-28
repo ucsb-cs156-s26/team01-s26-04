@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import edu.ucsb.cs156.example.ControllerTestCase;
@@ -17,9 +18,12 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MvcResult;
@@ -134,5 +138,81 @@ public class UCSBOrganizationControllerTests extends ControllerTestCase {
     String expectedJson = mapper.writeValueAsString(organization);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_organization() throws Exception {
+
+    UCSBOrganization originalOrganization =
+        UCSBOrganization.builder()
+            .orgCode("TESTORG")
+            .orgTranslationShort("Old Short")
+            .orgTranslation("Old Organization")
+            .inactive(false)
+            .build();
+
+    UCSBOrganization editedOrganization =
+        UCSBOrganization.builder()
+            .orgCode("TESTORG")
+            .orgTranslationShort("New Short")
+            .orgTranslation("New Organization")
+            .inactive(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(editedOrganization);
+
+    when(ucsbOrganizationRepository.findById(eq("TESTORG")))
+        .thenReturn(Optional.of(originalOrganization));
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/UCSBOrganization")
+                    .param("orgCode", "TESTORG")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(ucsbOrganizationRepository, times(1)).findById("TESTORG");
+    verify(ucsbOrganizationRepository, times(1)).save(originalOrganization);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_organization_that_does_not_exist() throws Exception {
+
+    UCSBOrganization editedOrganization =
+        UCSBOrganization.builder()
+            .orgCode("MISSING")
+            .orgTranslationShort("Missing Short")
+            .orgTranslation("Missing Organization")
+            .inactive(true)
+            .build();
+
+    String requestBody = mapper.writeValueAsString(editedOrganization);
+
+    when(ucsbOrganizationRepository.findById(eq("MISSING"))).thenReturn(Optional.empty());
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/UCSBOrganization")
+                    .param("orgCode", "MISSING")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    verify(ucsbOrganizationRepository, times(1)).findById("MISSING");
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBOrganization with id MISSING not found", json.get("message"));
   }
 }
