@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s26/team01-s26-04
 owner: ucsb-cs156-s26
 repo_name: team01-s26-04
-pull_requests: [{"author":{"id":"U_kgDOCeScdA","is_bot":false,"login":"GuaziBai","name":""},"headRefName":"annie-ucsborganization-get","number":77,"title":"Add GET endpoint for UCSBOrganization","url":"https://github.com/ucsb-cs156-s26/team01-s26-04/pull/77"},{"author":{"id":"U_kgDOCeScdA","is_bot":false,"login":"GuaziBai","name":""},"headRefName":"annie-ucsborganization-put","number":74,"title":"Add PUT endpoint for UCSBOrganization","url":"https://github.com/ucsb-cs156-s26/team01-s26-04/pull/74"}]
+pull_requests: [{"author":{"id":"U_kgDOCeScdA","is_bot":false,"login":"GuaziBai","name":""},"headRefName":"annie-ucsborganization-get","number":77,"title":"Add GET endpoint for UCSBOrganization","url":"https://github.com/ucsb-cs156-s26/team01-s26-04/pull/77"}]
