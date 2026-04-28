@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RecommendationRequestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">team01</a> &gt; <a href="index.source.html" class="el_package">edu.ucsb.cs156.example.controllers</a> &gt; <span class="el_source">RecommendationRequestController.java</span></div><h1>RecommendationRequestController.java</h1><pre class="source lang-java linenums">package edu.ucsb.cs156.example.controllers;
+
+import edu.ucsb.cs156.example.entities.RecommendationRequest;
+import edu.ucsb.cs156.example.repositories.RecommendationRequestRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+/** This is a REST controller for RecommendationRequest */
+@Tag(name = &quot;RecommendationRequest&quot;)
+@RequestMapping(&quot;/api/recommendationrequest&quot;)
+@RestController
+<span class="fc" id="L23">@Slf4j</span>
+<span class="fc" id="L24">public class RecommendationRequestController extends ApiController {</span>
+
+  @Autowired RecommendationRequestRepository recommendationRequestRepository;
+
+  /**
+   * List all RecommendationRequest
+   *
+   * @return an iterable of RecommendationRequest
+   */
+  @Operation(summary = &quot;List all recommendationrequests&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_USER')&quot;)
+  @GetMapping(&quot;/all&quot;)
+  public Iterable&lt;RecommendationRequest&gt; allRecommendationRequest() {
+<span class="fc" id="L37">    Iterable&lt;RecommendationRequest&gt; recommendationrequests =</span>
+<span class="fc" id="L38">        recommendationRequestRepository.findAll();</span>
+<span class="fc" id="L39">    return recommendationrequests;</span>
+  }
+
+  /**
+   * Create a new recommendationrequest
+   *
+   * @param requesterEmail
+   * @param professorEmail
+   * @param explanation
+   * @param dateRequested
+   * @param dateNeeded
+   * @param done
+   * @return the saved recommendationrequest
+   */
+  @Operation(summary = &quot;Create a new recommendation request&quot;)
+  @PreAuthorize(&quot;hasRole('ROLE_ADMIN')&quot;)
+  @PostMapping(&quot;/post&quot;)
+  public RecommendationRequest postRecommendationRequest(
+      @Parameter(name = &quot;requesterEmail&quot;) @RequestParam String requesterEmail,
+      @Parameter(name = &quot;professorEmail&quot;) @RequestParam String professorEmail,
+      @Parameter(name = &quot;explanation&quot;) @RequestParam String explanation,
+      @Parameter(name = &quot;dateRequested&quot;, description = &quot;ISO format e.g. YYYY-MM-DDTHH:MM:SS&quot;)
+          @RequestParam
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime dateRequested,
+      @Parameter(name = &quot;dateNeeded&quot;, description = &quot;ISO format e.g. YYYY-MM-DDTHH:MM:SS&quot;)
+          @RequestParam
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          LocalDateTime dateNeeded,
+      @Parameter(name = &quot;done&quot;) @RequestParam boolean done) {
+
+<span class="fc" id="L70">    RecommendationRequest recommendationRequest = new RecommendationRequest();</span>
+<span class="fc" id="L71">    recommendationRequest.setRequesterEmail(requesterEmail);</span>
+<span class="fc" id="L72">    recommendationRequest.setProfessorEmail(professorEmail);</span>
+<span class="fc" id="L73">    recommendationRequest.setExplanation(explanation);</span>
+<span class="fc" id="L74">    recommendationRequest.setDateRequested(dateRequested);</span>
+<span class="fc" id="L75">    recommendationRequest.setDateNeeded(dateNeeded);</span>
+<span class="fc" id="L76">    recommendationRequest.setDone(done);</span>
+
+<span class="fc" id="L78">    return recommendationRequestRepository.save(recommendationRequest);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
